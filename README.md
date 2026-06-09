@@ -24,34 +24,164 @@ This PowerShell script automates the setup and configuration of Azure NetApp Fil
 Install-Module Az -Force
 Install-Module Az.NetAppFiles -Force
 Get-Module -ListAvailable Az.NetAppFiles
+```
 
-# Azure Authentication
-$TenantId              = "# ADD YOUR TENANT ID"
-$SubscriptionId        = "# ADD YOUR SUBSCRIPTION ID"
+## Configuration
 
-# Azure Resources
-$ResourceGroupName     = "# ADD YOUR RESOURCE GROUP NAME"
-$AccountName           = "# ADD YOUR NETAPP ACCOUNT NAME"
-$PoolName              = "# ADD YOUR CAPACITY POOL NAME"
-$Location              = "# ADD YOUR AZURE REGION (e.g., westeurope)"
+Before running the script, update the configuration variables in `Setup-ANFCache.ps1` to match your environment. See the script file for detailed comments on each parameter.
 
-# Cache Configuration
-$CacheName             = "cache01"
-$Size                  = (50 * 1024 * 1024 * 1024)  # 50 GiB (minimum allowed)
-$Zone                  = "1"
-$ProtocolType          = "SMB"  # SMB or NFS supported
-$WriteBack             = "Enabled"
-$FilePath              = "# ADD YOUR CACHE FILE PATH"
+---
 
-# On-Premises Cluster Details
-$OriginPeerAddress     = "# ADD ON-PREMISES CLUSTER IP"
-$OriginPeerClusterName = "# ADD ON-PREMISES CLUSTER NAME"
-$OriginPeerVserverName = "# ADD ON-PREMISES VSERVER NAME"
-$OriginPeerVolumeName  = "# ADD ON-PREMISES VOLUME NAME"
+## Script Workflow
 
-# Network Configuration
-$CacheSubnetResourceId   = "/subscriptions/$SubscriptionId/resourceGroups/# ADD RESOURCE GROUP/providers/Microsoft.Network/virtualNetworks/# ADD VNET NAME/subnets/# ADD SUBNET NAME"
-$PeeringSubnetResourceId = "/subscriptions/$SubscriptionId/resourceGroups/# ADD RESOURCE GROUP/providers/Microsoft.Network/virtualNetworks/# ADD VNET NAME/subnets/# ADD SUBNET NAME"
+### Step 1: Create Cache
+Creates the ANF FlexCache volume with specified parameters:
 
-# Encryption
-$EncryptionKeySource   = "Microsoft.NetApp"
+- **Capacity:** 50 GiB minimum
+- **Protocol:** SMB with write-back caching enabled
+- **Encryption:** Microsoft-managed keys
+
+```powershell
+New-AnfCache @params
+```
+
+---
+
+### Step 2: Monitor Cache Creation
+
+Poll the cache status until it reaches `ClusterPeeringOfferSent` state:
+
+```powershell
+Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
+  -PoolName $PoolName | Select-Object CacheState
+```
+
+---
+
+### Step 3: Establish Cluster Peering
+
+Retrieve and execute the cluster peering command on the on-premises cluster:
+
+```powershell
+Get-AnfCachePeeringPassphrase -ResourceGroupName $ResourceGroupName `
+  -CacheName $CacheName -AccountName $AccountName -PoolName $PoolName `
+  | Select-Object ClusterPeeringCommand, ClusterPeeringPassphrase
+```
+
+Execute the returned command via SSH on the on-premises cluster. Example:
+
+```bash
+cluster peer accept -clusterName cache01 -peerClusterName cvodemolab -passphrase xxxxx
+```
+
+Verify with:
+```bash
+cluster peer show
+```
+
+---
+
+### Step 4: Verify Vserver Peering State
+
+Confirm cache state is `VserverPeeringOfferSent`:
+
+```powershell
+Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
+  -PoolName $PoolName | Select-Object CacheState
+```
+
+---
+
+### Step 5: Establish Vserver Peering
+
+Retrieve and execute the vserver peering command on the on-premises cluster:
+
+```powershell
+Get-AnfCachePeeringPassphrase -ResourceGroupName $ResourceGroupName `
+  -CacheName $CacheName -AccountName $AccountName -PoolName $PoolName `
+  | Select-Object VserverPeeringCommand
+```
+
+Monitor job progress with:
+```bash
+jobs
+```
+
+Then verify:
+```bash
+vserver peer show
+```
+
+---
+
+### Step 6: Verify Cache Health
+
+Confirm both `CacheState` and `ProvisioningState` are `Succeeded`:
+
+```powershell
+Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
+  -PoolName $PoolName | Select-Object CacheState, ProvisioningState
+```
+
+Retrieve mount targets:
+
+```powershell
+$cache = Get-AnfCache -ResourceGroupName $ResourceGroupName `
+  -AccountName $AccountName -PoolName $PoolName
+$cache.MountTargets
+```
+
+---
+
+### Step 7: Mount and Test
+
+- Mount the ANF cache volume on a jumpbox/client machine
+- Create test files in the cache or on-premises volume
+- Verify changes replicate bidirectionally
+- Test create, edit, save, and delete operations
+
+---
+
+## Useful Reference Commands
+
+```powershell
+# Check cache state
+Get-AnfCache -ResourceGroupName "rg-deanm" -AccountName "dm-west-europe" `
+  -PoolName "Flexcache" | Select-Object CacheState
+
+# Get detailed cache information
+Get-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
+  -AccountName "$AccountName" -PoolName "$PoolName" -Name "$CacheName"
+
+# Remove cache (if needed)
+Remove-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
+  -AccountName "$AccountName" -PoolName "$PoolName" -Name "$CacheName"
+
+# Retrieve peering commands
+Get-AnfCachePeeringPassphrase -ResourceGroupName "rg-deanm" `
+  -CacheName cache01 -AccountName "dm-west-europe" -PoolName "Flexcache"
+```
+
+---
+
+## Notes
+
+- Cache creation may take several minutes
+- Minimum cache size is 50 GiB
+- Size parameter should be specified as a long value in bytes to avoid parsing issues
+- Both SMB and NFS protocols are supported
+- Cluster peering must be established before vserver peering
+- All network subnets must have appropriate routing and firewall rules configured
+
+---
+
+## Files in This Repository
+
+- **README.md** - This documentation file
+- **Setup-ANFCache.ps1** - PowerShell script with commented configuration and step-by-step execution
+
+---
+
+## Support
+
+For issues with Azure NetApp Files, refer to the [official Microsoft documentation](https://learn.microsoft.com/en-us/azure/azure-netapp-files/).
