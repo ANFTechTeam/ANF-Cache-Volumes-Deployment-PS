@@ -65,7 +65,7 @@ $params = @{
     AccountName              = "# ADD YOUR NETAPP ACCOUNT NAME"
     PoolName                 = "# ADD YOUR CAPACITY POOL NAME"
     Zone                     = "1"
-    Size                     = (50 * 1024 * 1024 * 1024)  # 50GiB is allocated (minimum cache size allowed)
+    Size                     = (100 * 1024 * 1024 * 1024)  # 100GiB is allocated (50GiB is the minimum cache size allowed)
     ProtocolType             = "SMB"                        # Options: SMB or NFS
     WriteBack                = "Enabled"
     OriginPeerAddress        = "# ADD ON-PREMISES CLUSTER IP ADDRESS"
@@ -76,6 +76,7 @@ $params = @{
     CacheName                = "cache01"
     FilePath                 = "# ADD YOUR CACHE FILE PATH"
     EncryptionKeySource      = "Microsoft.NetApp"
+    ThroughputMibps         =   16 #example utilised for a 1TiB of ANF standard.
     CacheSubnetResourceId    = "/subscriptions/$subsId/resourceGroups/# ADD RESOURCE GROUP/providers/Microsoft.Network/virtualNetworks/# ADD VNET NAME/subnets/# ADD SUBNET NAME"
     PeeringSubnetResourceId  = "/subscriptions/$subsId/resourceGroups/# ADD RESOURCE GROUP/providers/Microsoft.Network/virtualNetworks/# ADD VNET NAME/subnets/# ADD SUBNET NAME"
 }
