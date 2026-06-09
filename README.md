@@ -49,7 +49,7 @@ New-AnfCache @params
 
 ### Step 2: Monitor Cache Creation
 
-Poll the cache status until it reaches `ClusterPeeringOfferSent` state:
+Poll the cache status until it reaches `ClusterPeeringOfferSent` state this will transistion from 'ClusterPeeringIssued: * check
 
 ```powershell
 Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
@@ -60,7 +60,7 @@ Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
 
 ### Step 3: Establish Cluster Peering
 
-Retrieve and execute the cluster peering command on the on-premises cluster:
+Retrieve (copy) the cluster peering command and passphrase and excute on the on-premises cluster:
 
 ```powershell
 Get-AnfCachePeeringPassphrase -ResourceGroupName $ResourceGroupName `
