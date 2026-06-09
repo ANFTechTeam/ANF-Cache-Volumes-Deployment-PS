@@ -8,15 +8,20 @@ THIS CODE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, IN
 
 This PowerShell script automates the setup and configuration of Azure NetApp Files (ANF) FlexCache with cluster peering to an on-premises NetApp cluster. The script enables write-back caching using the SMB protocol and establishes peering relationships between Azure and on-premises infrastructure.
 
+## Official MS Learn Documentation:
+- [Understand Azure NetApp Files cache volumes](https://learn.microsoft.com/en-us/azure/azure-netapp-files/cache-volumes)
+- [Module: Az.NetAppFiles (New-AzNetAppFilesCache)](https://learn.microsoft.com/en-us/powershell/module/az.netappfiles/new-aznetappfilescache?view=azps-16.0.0)
+
 ## Prerequisites
 
 - PowerShell 5.0 or higher
 - Azure CLI or Azure PowerShell modules installed
 - **Az.NetAppFiles module version 1.3.0 or higher** (required for cache cmdlets)
-- **Az.Accounts module** (dependency for authentication)
+- **Az.Accounts module** (dependency for authentication 5.5.0 or higher)
 - Azure subscription with appropriate permissions
 - Network connectivity to on-premises cluster
 - SSH access to on-premises cluster
+- The source cluster must be running **ONTAP 9.15.1** or later version.
 
 ### Module Installation
 
@@ -35,7 +40,7 @@ Before running the script, update the configuration variables in `Setup-ANFCache
 ## Script Workflow
 
 ### Step 1: Create Cache
-Creates the ANF FlexCache volume with specified parameters:
+Creates an ANF FlexCache volume using parameters defined in a hashtable :
 
 - **Capacity:** 50 GiB minimum
 - **Protocol:** SMB with write-back caching enabled
@@ -50,13 +55,14 @@ New-AnfCache @params
 ### Step 2: Monitor Cache Creation
 
 Poll the cache status until it reaches `ClusterPeeringOfferSent` state this will transistion from 'ClusterPeeringIssued: * check
+[!IMPORTANT]
+> You have 30 minutes after the cacheState transitions to ClusterPeeringOfferSent to execute the clusterPeeringCommand.
 
 ```powershell
 Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
   -PoolName $PoolName | Select-Object CacheState
 ```
-[!IMPORTANT]
-> You have 30 minutes after the cacheState transitions to ClusterPeeringOfferSent to execute the clusterPeeringCommand
+
 ---
 
 ### Step 3: Establish Cluster Peering
