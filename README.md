@@ -174,13 +174,9 @@ $cache.MountTargets
 ## Useful Reference Commands
 
 ```powershell
-# Check cache state
-Get-AnfCache -ResourceGroupName "rg-deanm" -AccountName "dm-west-europe" `
-  -PoolName "Flexcache" | Select-Object CacheState
-
 # Get detailed cache information
 Get-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
-  -AccountName "$AccountName" -PoolName "$PoolName" -Name "$CacheName"
+  -AccountName "$AccountName" -PoolName "$PoolName" -Name "$CacheName" |ConvertTo-JSON
 
 # Remove cache (if needed)
 Remove-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
@@ -189,6 +185,15 @@ Remove-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
 # Retrieve peering commands
 Get-AnfCachePeeringPassphrase -ResourceGroupName "rg-deanm" `
   -CacheName cache01 -AccountName "dm-west-europe" -PoolName "Flexcache"
+
+# Update throughput of a cache volume
+Update-AnfCache -ResourceGroupName $ResourceGroupName '
+  -AccountName $AccountName -PoolName $PoolName -ThroughputMibps 2 -Name cache01   
+
+# Update the size of a cache volume
+Update-AnfCache -ResourceGroupName $ResourceGroupName '
+  -AccountName $AccountName -PoolName $PoolName -Size (200 * 1024 * 1024 * 1024) -Name cache01
+
 ```
 
 ---
@@ -201,6 +206,7 @@ Get-AnfCachePeeringPassphrase -ResourceGroupName "rg-deanm" `
 - Both SMB and NFS protocols are supported
 - Cluster peering must be established before vserver peering
 - All network subnets must have appropriate routing and firewall rules configured
+- Recommended cache size should be 10-15% of the origin volume. 
 
 ---
 
