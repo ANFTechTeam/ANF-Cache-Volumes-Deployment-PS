@@ -91,7 +91,8 @@ $CacheName         = $params.CacheName
 # STEP 1: CREATE CACHE
 # ===========================================================================================
 # Creates the ANF FlexCache volume with specified parameters
-# Capacity: 50 GiB minimum
+# Capacity: 100 GiB minimum. Service level: Standard
+# Throughput: 16MiBS. Comsuming the full allocated tput for the pool. 
 # Protocol: SMB with write-back caching enabled
 # Encryption: Microsoft-managed keys
 
