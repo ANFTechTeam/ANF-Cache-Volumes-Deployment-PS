@@ -64,14 +64,12 @@ Creates an ANF FlexCache volume using parameters defined in a hashtable :
 - **Protocol:** SMB with **write-back caching enabled**
 - **Encryption:** Microsoft-managed keys
 
-[!WARNING]
-> Write-back mode introduces asynchronous persistence to the origin. The external origin must also remain less than 80% full.
-> Each external origin system node has at least 128 GB of RAM and 20 CPUs to absorb the write-back messages initiated by write-back enabled caches. This is the equivalent of an A400 or greater.
-
 ```powershell
 New-AnfCache @params
 ```
-
+[!WARNING]
+> Write-back mode introduces asynchronous persistence to the origin. The external origin must also remain less than 80% full.
+> Each external origin system node has at least 128 GB of RAM and 20 CPUs to absorb the write-back messages initiated by write-back enabled caches. This is the equivalent of an A400 or greater.
 ---
 
 ### Step 2: Monitor Cache Creation
