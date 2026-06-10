@@ -180,7 +180,7 @@ Get-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
 # Remove cache (if needed)
 # In the first instance, disable **writeback** if enabled.
 
-Update-AnfCache -ResourceGroupName $ResourceGroupName '
+Update-AnfCache -ResourceGroupName $ResourceGroupName `
 -AccountName $AccountName -PoolName $PoolName -name "$CacheName" -WriteBack Disabled
 
 # You can then proceed to delete the ANFcache volume. 
@@ -194,11 +194,11 @@ Get-AnfCachePeeringPassphrase -ResourceGroupName "$ResourceGroupName" `
   -CacheName cache01 -AccountName "$AccountName" -PoolName "Flexcache"
 
 # Update throughput of a cache volume
-Update-AnfCache -ResourceGroupName $ResourceGroupName '
+Update-AnfCache -ResourceGroupName $ResourceGroupName `
   -AccountName $AccountName -PoolName $PoolName -ThroughputMibps 2 -Name "$CacheName"  
 
 # Update the size of a cache volume
-Update-AnfCache -ResourceGroupName $ResourceGroupName '
+Update-AnfCache -ResourceGroupName $ResourceGroupName `
   -AccountName $AccountName -PoolName $PoolName -Size (200 * 1024 * 1024 * 1024) -Name "$CacheName"
 
 ```
