@@ -43,11 +43,14 @@ Required to execute deployment and automation scripts.
 
 ### ONTAP Considerations
 - The source cluster must be running **ONTAP 9.15.1** or later version and ONTAP **9.15.1P5** to utilise Writeback.
+- Export policies must be configured on the source ONTAP volumes to allow **FlexCache connectivity** from Azure NetApp Files
   
 ### Azure NetApp Files (ANF) Considerations
 - To use SMB, configure an **Active Directory (AD) connection** within the NetApp account and perform a domain join.
 - Ensure **DNS and AD DS integration** is in place prior to cache volume creation.
-- Ensure the capacity pool has sufficient space for the new cache volume, as well as available throughput to support the workload.  
+- Ensure the capacity pool has sufficient space for the new cache volume, as well as available throughput to support the workload.
+- The best practice for the size of a FlexCache volume is to be at least 10-15 percent of the size of the origin volume.
+
 
 ### Azure Infrastructure Requirements
 - Configure a **delegated subnet** for Azure NetApp Files.
