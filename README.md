@@ -28,17 +28,35 @@ The example utilises the minimum ANF deployment capacity pool of 1 TiB, is con
 - [References](#references)
 
 ## Prerequisites
-- PowerShell 5.0 or higher
-- Azure CLI or Azure PowerShell modules installed
-- **Az.NetAppFiles module version 1.3.0 or higher** (required for cache cmdlets)
-- **Az.Accounts module** (dependency for authentication 5.5.0 or higher)
-- Azure subscription with appropriate permissions
+---
+
+### Script & Tooling Requirements
+- Required to execute deployment and automation scripts.
+- **PowerShell 5.0 or higher**
+- **Azure CLI** or **Azure PowerShell modules**
+- **Az.NetAppFiles module ≥ 1.3.0** (required for cache cmdlets)
+- **Az.Accounts module ≥ 5.5.0** (authentication dependency)
+- Azure subscription with **appropriate permissions**
+- **SSH access** to the on-premises ONTAP cluster
+
+### ONTAP Considerations
+- The source cluster must be running **ONTAP 9.15.1** or later version and ONTAP **9.15.1P5** to utilise Writeback.
+- In ONTAP versions before 9.18.1, If an SVM DR relationship is broken, FlexCache must be manually recreated with a new origin volume.
+- From ONTAP **9.18.1** onwards: During SVM failover, FlexCache automatically redirects   to the DR site origin- **No manual recovery steps required**
+
+
+
 - To use SMB, you should configure an Active Directory (AD) connection within the NetApp account and perform a domain join to enable the creation of   SMB-enabled cache volumes
 - Network connectivity to on-premises OnTap cluster
-- SSH access to on-premises OnTap cluster
-- The source cluster must be running **ONTAP 9.15.1** or later version and ONTAP **9.15.1P5** to utilise Writeback.
-- In ONTAP versions before 9.18.1, If an SVM DR relationship is broken, FlexCache must be manually recreated with a new origin volume. From ONTAP **9.18.1** onwards: During SVM failover, FlexCache automatically redirects to the DR site origin- **No manual recovery steps required**
+
+- 
 - Ensure the capacity pool has sufficient space for the new cache volume, as well as available throughput to support the workload.  
+
+### Azure Infrastructure Requirements
+- Configure a **delegated subnet** for Azure NetApp Files.
+- Ensure **network connectivity** to the on-premises ONTAP cluster.
+- Validate required **firewall ports and NSG rules**.
+- Ensure connectivity supports expected **RTT latency** requirements.
 
 ## Azure NetApp Files Cache Volumes – Requirements and Considerations
 
@@ -79,7 +97,7 @@ Creates an ANF FlexCache volume using parameters defined in a hashtable. My exam
 New-AzNetAppFilesCache @params
 ```
 [!WARNING]
-> Write-back mode introduces asynchronous persistence to the origin. The external origin **must** also remain less than 80% full.
+> Write-back mode introduces asynchronous persistence to the origin. The external origin **must** also remain less than **80% full.**
 > Each external origin system node has at least 128 GB of RAM and 20 CPUs to absorb the write-back messages initiated by write-back enabled caches. This is the equivalent of an A400 or greater.
 ---
 
