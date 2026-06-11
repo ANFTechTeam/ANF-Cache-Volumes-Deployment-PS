@@ -219,7 +219,7 @@ $cache.FilePath
 - 
   List available shares on the SMB server:
 ```powershell
-  Get-SmbShare -CimSession smbserverfqdn
+Get-SmbShare -CimSession smbserverfqdn
 
 New-PSDrive `
   -Name X `
