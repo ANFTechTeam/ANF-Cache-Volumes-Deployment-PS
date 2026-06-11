@@ -86,8 +86,8 @@ Before running the script, update the configuration variables in `Setup-ANFCache
 ### Step 1: Create Cache
 Creates an ANF FlexCache volume using parameters defined in a hashtable. My example is configuired with the following properties:
 
-- **Capacity:** 100 GiB minimum
-- **Throughput** 16MiB/s
+- **Capacity:** 50 GiB
+- **Throughput** 16 MiB/s
 - **Protocol:** SMB, NFS is also [supported](https://learn.microsoft.com/en-us/powershell/module/az.netappfiles/new-aznetappfilescache?view=azps-16.0.0#example-1-create-a-cache-backed-by-an-on-prem-ontap-origin).
 - **write-back caching enabled**
 - **Encryption:** Microsoft-managed keys
