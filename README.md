@@ -199,32 +199,37 @@ Get-AnfCache `
   Select-Object CacheState, ProvisioningState
 ```
 ---
-
 ### Step 7: Retrieve Mount Points and Share Name
-```powershell
-$cache.MountTargets
-```
-Example Output:
+Will extract the IP, and SmbServerFQDN. (Assuming SMB, this should be resolvable) 
 
-Will include the IP, and SmbServerFQDN. 
+```powershell
+$cache = Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName -PoolName $PoolName -Name $CacheName
+$cache.MountTargets
+
+```
+This will outpout the share name, you was configured as 'Filepath' within the params variable.
 
 ```powershell
 $cache.FilePath
 ```
 ---
-This will outpout the share name, you was configured as 'Filepath' within the params variable.
 
 ### Step 7: Mount and Test
 
 - Mount the ANF cache volume on a jumpbox/client machine, also mount the origin from the jumpbox, or another client with access.
-- From a cmd prompt, utilise net view using the FQDN output extracted when running $cache.MountTargets, you can also choose to just map the share, or use explorer.
-  '''powershell
-  net view \\smbserverfqdn
-This will output the share, or you can utilise.
-
-Net use x: \\smbserverfqdn\Filepath
-  
+- From PS utilise the output extracted when running $cache.MountTargets and $cache.FilePath, you can also choose to use PS or Explorer.
 - 
+  List available shares on the SMB server:
+  '''powershell
+  Get-SmbShare -CimSession smbserverfqdn
+
+New-PSDrive `
+  -Name X `
+  -PSProvider FileSystem `
+  -Root \\smbserverfqdn\FilePath `
+  -Persist
+```
+
 - Create test files in the cache or on-premises volume
 - Verify changes replicate bidirectionally
 - Test create, edit, save, and delete operations
