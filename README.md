@@ -99,7 +99,7 @@ Creates an ANF FlexCache volume using parameters defined in a hashtable. My exam
 
 
 ```powershell
-New-AzNetAppFilesCache @params
+New-AzNetAppFilesCache @params -NoWait
 ```
 [!WARNING]
 > [Write-back mode](https://learn.microsoft.com/en-us/azure/azure-netapp-files/cache-requirements#write-back-considerations) introduces asynchronous persistence to the origin. The external origin **must** also remain less than **80% full.**
@@ -108,7 +108,7 @@ New-AzNetAppFilesCache @params
 
 ### Step 2: Monitor Cache Creation
 
-Poll the cache status until it reaches `ClusterPeeringOfferSent` state this will transistion from 'ClusterPeeringIssued: * check
+Poll the cache status until it reaches **`ClusterPeeringOfferSent`** state this will transistion from 'Creating'
 
 ```powershell
 Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
