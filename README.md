@@ -90,7 +90,8 @@ Creates an ANF FlexCache volume using parameters defined in a hashtable. My exam
 
 - **Capacity:** 100 GiB minimum
 - **Throughput** 16MiB/s
-- **Protocol:** SMB with **write-back caching enabled**
+- **Protocol:** SMB, NFS is also [configurable](https://learn.microsoft.com/en-us/powershell/module/az.netappfiles/new-aznetappfilescache?view=azps-16.0.0).
+- **write-back caching enabled**
 - **Encryption:** Microsoft-managed keys
 - **Availability Zone** 1 - Physical zones are real datacentres; logical zones are the labels in your subscription. Use the same physical zone across subscriptions for **compute and storage.** For more info refer to the [doc link above](#official-ms-learn-documentation)
 
