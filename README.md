@@ -43,8 +43,6 @@ Required to execute deployment and automation scripts.
 
 ### ONTAP Considerations
 - The source cluster must be running **ONTAP 9.15.1** or later version and ONTAP **9.15.1P5** to utilise Writeback.
-- In ONTAP versions before 9.18.1, If an SVM DR relationship is broken, FlexCache must be manually recreated with a new origin volume.
-- From ONTAP **9.18.1** onwards: During SVM failover, FlexCache automatically redirects   to the DR site origin- **No manual recovery steps required**
   
 ### Azure NetApp Files (ANF) Considerations
 - To use SMB, configure an **Active Directory (AD) connection** within the NetApp account and perform a domain join.
