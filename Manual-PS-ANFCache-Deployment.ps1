@@ -1,12 +1,41 @@
+<#
+.SYNOPSIS
+    Azure NetApp Files (ANF) FlexCache Setup and Configuration 
+    
+.DESCRIPTION
+    This code is a manual deployment providing the relevant cli and instructions, ustilising variables to help deploy Azure NetApp Files FlexCache 
+    with cluster peering to an on-premises NetApp cluster. It includes write-back caching 
+    using the SMB protocol and establishes peering relationships between Azure and 
+    on-premises infrastructure.
+
+.NOTES
+    ⚠️ DISCLAIMER: THIS CODE IS PROVIDED AS-IS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+    FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+    Prerequisites:
+    - PowerShell 5.0 or higher
+    - Az.NetAppFiles module version 1.3.0 or higher
+    - Az.Accounts module
+    - Appropriate Azure permissions
+    - Manual QoS Requirement (ANF Cache Volumes)
+    -   Ensure the ANF capacity pool is configured for Manual QoS
+    -   Required when specifying explicit volume throughput
+    -   Automatic QoS mode does not support per-volume throughput control as utilised in this script, edit accordingly.
+    
+.AUTHOR Dean Miller 
+    Updated: June 2026
+#>
+
 #  Connect to Azure
 Connect-AzAccount -Tenant "[Insert Azure Tenant ID]"
 Set-AzContext -SubscriptionId "[Insert Azure Subscription ID]"
+
 # Please refer to the github repo for latest instructions and updates.
 ## https://github.com/deanpmiller/ANF-Cache-Vols
 
 # Create variables for the cache and peering subnets
 # Assumes write-back cache with SMB protocol, peering to an on-premises cluster with the following details:
-
 
 $subsId                   = "[Insert Azure Subscription ID]"
 $params = @{
@@ -35,7 +64,6 @@ $PoolName          = $params.PoolName
 $CacheName         = $params.CacheName
 
 New-AzNetAppFilesCache @params
-
 
 #Step 2: 
 #Monitor the cache creation process, you can use the Get-AnfCache cmdlet to check the status of the cache. It may take some time for the cache to be created and become available.
