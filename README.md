@@ -151,9 +151,14 @@ New-AzNetAppFilesCache @params
 
 ### Step 2: Monitor Cache Creation
 
-Poll the cache status until it reaches **`ClusterPeeringOfferSent`** state this will transistion from 'Creating'
+Poll the cache status until it reaches **`ClusterPeeringOfferSent`** state this will transistion from 'Creating'. Note. Additional variables need to be set to continue.
 
 ```powershell
+$ResourceGroupName = $params.ResourceGroupName
+$AccountName       = $params.AccountName
+$PoolName          = $params.PoolName
+$CacheName         = $params.CacheName
+
 Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName `
   -PoolName $PoolName -name $CacheName  | Select-Object CacheState
 ```
