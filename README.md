@@ -84,7 +84,7 @@ Get-Module -ListAvailable Az.NetAppFiles
 ## Configuration
 
 The **Manual-PS-ANFCache-Deployment.ps1** script contains the CLI commands alongside a hashtable, which acts as a structured collection of configuration settings (key = name, value = data).
-It also defines all required variables needed to execute the CLI successfully.
+It also defines all required variables needed to execute the CLI successfully. I used VisualStudioCode, with a terminal session, and the deployment script downloaded.
 
 ---
 
