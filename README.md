@@ -306,7 +306,10 @@ New-PSDrive `
 ## Useful Reference Commands
 
 ```powershell
-# Get detailed cache information
+# Get all cache volume details
+ Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName -PoolName $PoolName       
+
+# Get detailed cache information for a specific CacheName
 Get-AzNetAppFilesCache -ResourceGroupName "$ResourceGroupName" `
   -AccountName "$AccountName" -PoolName "$PoolName" -Name "$CacheName" |ConvertTo-JSON
 
