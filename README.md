@@ -127,6 +127,7 @@ $params = @{
     CacheSubnetResourceId    = "/subscriptions/$subsId/resourceGroups/<network-resource-group>/providers/Microsoft.Network/virtualNetworks/<vnet-name>/subnets/<subnet-name>"
     PeeringSubnetResourceId  = "/subscriptions/$subsId/resourceGroups/<network-resource-group>/providers/Microsoft.Network/virtualNetworks/<vnet-name>/subnets/<subnet-name>"
 }
+# Variables used to poll CacheState until it reaches 'ClusterPeeringOfferSent' before proceeding.
 $ResourceGroupName = $params.ResourceGroupName
 $AccountName       = $params.AccountName
 $PoolName          = $params.PoolName
