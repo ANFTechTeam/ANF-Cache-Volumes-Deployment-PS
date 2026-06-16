@@ -142,7 +142,7 @@ Creates an ANF FlexCache volume using parameters defined in a hashtable. My exam
 - **Write-back caching enabled**
 - **Encryption:** Microsoft-managed keys
 - **Availability Zone** - If compute is deployed within the **same subscription**, ensure that both the compute resources and ANF volumes are placed in the same Availability Zone.
-- For a full list of available parmeters, please refer to:[Az.NetAppFiles Module](https://learn.microsoft.com/en-us/powershell/module/az.netappfiles/new-aznetappfilescache?view=azps-15.6.0)
+- For a full list of available parmeters, please refer to: [Az.NetAppFiles Module](https://learn.microsoft.com/en-us/powershell/module/az.netappfiles/new-aznetappfilescache?view=azps-15.6.0)
 
 ```powershell
 Start-Job -Name "ANF-Create-Cache-$CacheName" `
