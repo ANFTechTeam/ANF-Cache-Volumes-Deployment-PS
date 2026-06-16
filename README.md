@@ -279,9 +279,9 @@ Will extract the IP, and SmbServerFQDN. (Assuming SMB, this should be resolvable
 
 ```powershell
 $cache = Get-AnfCache -ResourceGroupName $ResourceGroupName -AccountName $AccountName -PoolName $PoolName -Name $CacheName
-$cache.MountTargets
+$cache.MountTargets |Select-Object IPAddress,SmbServerFqdn
 
-This will outpout the share name, you was configured as 'Filepath' within the params variable.
+This will output the share name, you was configured as 'Filepath' within the params variable.
 
 $cache.FilePath
 ```
@@ -290,11 +290,8 @@ $cache.FilePath
 ### Step 8: Mount and Test
 
 - Mount the ANF cache volume on a jumpbox/client machine, also mount the origin from the jumpbox, or another client with access.
-- From PS utilise the output extracted when running $cache.MountTargets and $cache.FilePath, you can also choose to use PS or Explorer.
+- From PS utilise the output extracted when running $cache.MountTargets and $cache.FilePath, you can also choose to use PS or Explorer, or cmd prompt.
 - 
-  List available shares on the SMB server:
-```powershell
-Get-SmbShare -CimSession smbserverfqdn
 
 New-PSDrive `
   -Name X `
