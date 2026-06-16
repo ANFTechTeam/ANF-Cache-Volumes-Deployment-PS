@@ -291,7 +291,6 @@ $cache.FilePath
 
 - Mount the ANF cache volume on a jumpbox/client machine, also mount the origin from the jumpbox, or another client with access.
 - From PS utilise the output extracted when running $cache.MountTargets and $cache.FilePath, you can also choose to use PS or Explorer, or cmd prompt.
-- 
 ```powershell
 New-PSDrive `
   -Name X `
