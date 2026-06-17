@@ -192,9 +192,8 @@ Write-Host "Proceed to cluster peering"
 > If the cachestate is failed, the recovery action is to delete the cache volume.
 > 
 > Follow the link within the document to list failed cache volumes, and delete them:
-> [Remove a Cache Volume for a failed deployment](#remove-a-cache-volume-for-a-failed-deployment)
+> [Cache Volume Recovery (Cluster Peering Timeout)](#cache-volume-recovery-cluster-peering-timeout)
 ---
-
 
 ### Step 3: Establish Cluster Peering
 
