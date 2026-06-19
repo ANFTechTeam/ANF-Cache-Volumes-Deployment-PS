@@ -87,7 +87,7 @@ Connectivity between the on-premises ONTAP cluster and Azure NetApp Files must b
 - Validate required **firewall ports and NSG rules**.
 - Ensure connectivity supports expected **RTT latency** requirements.
 - Allign ANF volumes to the same AZ as to where your compute is deployed.
-- If compute and storage reside in **different subscriptions**, physical zone alignment must still be validated across subscriptions.  To understand the mapping between logical and physical zones for your subscription, follow [here].(https://learn.microsoft.com/en-gb/azure/reliability/availability-zones-overview?tabs=azure-powershell#physical-and-logical-availability-zones)
+- If compute and storage reside in **different subscriptions**, physical zone alignment must still be validated across subscriptions.  To understand the mapping between logical and physical zones for your subscription, follow [here](https://learn.microsoft.com/en-gb/azure/reliability/availability-zones-overview?tabs=azure-powershell#physical-and-logical-availability-zones)
 
 
 
