@@ -129,7 +129,7 @@ $params = @{
     AccountName              = "<anf-account-name>"
     PoolName                 = "<capacity-pool-name>"
     Zone                     = "<zone>"
-    Size                     = (50 * 1024 * 1024 * 1024) 
+    Size                     = (50 * 1024 * 1024 * 1024)
     # Cache size in bytes. The example uses 50 GiB. For 1 TiB, use (1024 * 1024 * 1024 * 1024)
     ProtocolType             = "SMB"
     WriteBack                = "Enabled"
