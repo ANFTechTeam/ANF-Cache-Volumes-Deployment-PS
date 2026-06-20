@@ -181,7 +181,8 @@ Start-Job -ScriptBlock {
 
 ### Step 2: Monitor Cache Creation
 
-Poll the cache status until it reaches **`ClusterPeeringOfferSent`** state this will transistion from 'Creating'. Note. Additional variables need to be set to continue.
+Poll the cache status until it reaches **`ClusterPeeringOfferSent`** state this will transistion from 'Creating'.
+Note the variables above need of been set to continue.
 
 ```powershell
 # Loops until CacheState reaches 'ClusterPeeringOfferSent' before proceeding.
