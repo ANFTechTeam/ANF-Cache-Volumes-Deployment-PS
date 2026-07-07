@@ -38,7 +38,7 @@ $params = @{
     FilePath                = "<SMB_SHARE_NAME>"           # e.g. anfcache
     EncryptionKeySource     = "Microsoft.NetApp"
     ThroughputMibps         = 16 # This throughput value can be adjusted based on your performance requirements. The minimum is 1 MiB/s, this will depend on the service level of the capacity pool and the workload requirements.
-
+                                 # Ensure your capacity pool is enabled for manual QoS, if not setting this property will result in an error. The throughput value is in MiB/s, and should be set according to the expected workload and performance needs.
     # Networking
     CacheSubnetResourceId   = "/subscriptions/$subsId/resourceGroups/<RG_NAME>/providers/Microsoft.Network/virtualNetworks/<VNET_NAME>/subnets/<SUBNET_NAME>"
     PeeringSubnetResourceId = "/subscriptions/$subsId/resourceGroups/<RG_NAME>/providers/Microsoft.Network/virtualNetworks/<VNET_NAME>/subnets/<SUBNET_NAME>"
@@ -62,19 +62,31 @@ Start-Job -ScriptBlock {
 # ===========================================================================================
 # STEP 2: POLL FOR CLUSTER PEERING STATE
 # ===========================================================================================
-
 do {
-    $state = (Get-AnfCache -ResourceGroupName $ResourceGroupName `
+    $cache = Get-AnfCache -ResourceGroupName $ResourceGroupName `
                           -AccountName $AccountName `
                           -PoolName $PoolName `
-                          -Name $CacheName).CacheState
+                          -Name $CacheName
 
-    Write-Host "Current CacheState: $state"
+    $state = $cache.CacheState
+    $provState = $cache.ProvisioningState
+
+    Write-Host "CacheState: $state | ProvisioningState: $provState"
+
+    #  Exit on failure immediately
+    if ($provState -eq "Failed") {
+        Write-Error "Cache provisioning FAILED. Exiting loop."
+        break
+    }
+
     Start-Sleep -Seconds 10
 
 } until ($state -eq "ClusterPeeringOfferSent")
 
-Write-Host "Proceed to cluster peering"
+# Only proceed if successful
+if ($state -eq "ClusterPeeringOfferSent") {
+    Write-Host "Proceed to cluster peering"
+}
 
 # ===========================================================================================
 # STEP 3: RETRIEVE CLUSTER PEERING DETAILS
@@ -95,11 +107,30 @@ Write-Host "4. Verify with: cluster peer show" -ForegroundColor Yellow
 # ===========================================================================================
 # STEP 4: VERIFY NEXT STATE
 # ===========================================================================================
+# Confirm that the cache state is VserverPeeringOfferSent before proceeding. 
+# Note that the provisioning state may still be 'Succeeded' while the cache state is transitioning. The cache state must be 'VserverPeeringOfferSent' before proceeding to retrieve the VserverPeeringCommand.
 
-Get-AnfCache -ResourceGroupName $ResourceGroupName `
-    -AccountName $AccountName `
-    -PoolName $PoolName `
-    -Name $CacheName
+do {
+    $cache = Get-AnfCache -ResourceGroupName $ResourceGroupName `
+                          -AccountName $AccountName `
+                          -PoolName $PoolName `
+                          -Name $CacheName
+
+    $cacheState = $cache.CacheState
+    $provState  = $cache.ProvisioningState
+
+    Write-Host "CacheState: $cacheState | ProvisioningState: $provState"
+
+    if ($provState -eq "Failed") {
+        throw "Cache provisioning failed. Current CacheState: $cacheState"
+    }
+
+    Start-Sleep -Seconds 10
+
+} until ($cacheState -eq "VserverPeeringOfferSent")
+
+Write-Host "Cache state is VserverPeeringOfferSent. Proceed to next step..."
+
 
 # ===========================================================================================
 # STEP 5: RETRIEVE VSERVER PEERING COMMAND
@@ -112,7 +143,7 @@ Get-AnfCachePeeringPassphrase -ResourceGroupName $ResourceGroupName `
     Select-Object VserverPeeringCommand
 
 # ===========================================================================================
-# STEP 6: VALIDATE CACHE READY STATE
+# STEP 6: VALIDATE CACHE READY STATE & RETRIEVE MOUNT PATH
 # ===========================================================================================
 
 $cache = Get-AnfCache -ResourceGroupName $ResourceGroupName `
